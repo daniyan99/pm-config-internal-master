@@ -1,0 +1,269 @@
+
+#sideBar {
+    display: inline-block;
+    width: $sideBarWidth;
+    top: 0;
+    position: fixed;
+    right: 0;
+    height: 100vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    -webkit-box-shadow: -8px 0px 33px -10px rgba(0, 0, 0, 0.49);
+    -moz-box-shadow: -8px 0px 33px -10px rgba(0, 0, 0, 0.49);
+    box-shadow: -8px 0px 33px -10px rgba(0, 0, 0, 0.49);
+
+    .sideBar {
+        height: 100vh;
+        width: 100%;
+        ul {
+            height: 100%;
+            li {
+                display: inline-block;
+                list-style: none;
+                position: relative;
+                pointer-events: auto;
+
+            }
+        }
+    }
+
+    .sideBar {
+        &.sideBar-parent {
+            ul {
+                li {
+                    width: 100%;
+                    height: calc(100% / 5.5);
+                    min-height: 150px;
+
+                    &:not(:last-child) {
+                        border-bottom: thin solid $grey;
+                    }
+
+                    div {
+                        @include verticalAlign;
+                        display: inline-block;
+                        width: 100%;
+                        pointer-events: none;
+
+                        .icon {
+                            all: unset;
+                            display: inline-block;
+                            width: 100%;
+                            height: 100px;
+                            position: relative;
+
+                            span {
+                                width: 90px;
+                                height: 90px;
+                                border-radius: 50%;
+                                display: block;
+                                margin: 0 auto;
+                            }
+                        }
+                        p.title {
+                            text-align: center;
+                            font-size: 14px;
+                            text-transform: capitalize;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .sideBar {
+        &.sideBar-level2 {
+            padding: 0 0 100px 0;
+            width: $sideBarWidth;
+            top: 0;
+            position: fixed;
+            right: -100%;
+            @include animate;
+            background: $white;
+
+            &.open {
+                right: 0;
+                @include animate;
+            }
+        }
+    }
+
+    .sideBar {
+        &.sideBar-level2 {
+            overflow: scroll;
+            .sideBar-block {
+                display: inline-block;
+                width: 100%;
+
+                .sideBar-block-title {
+                    font-size: 17px;
+                    text-align: center;
+                    text-transform: uppercase;
+                    padding: 30px 0;
+                    background: $white;
+                    font-weight:700;
+                }
+
+                ul {
+                    li {
+                        width: 50%;
+                        float: left;
+                        padding: 10px;
+                        height: 150px;
+                        border-bottom: 4px solid $white;
+                        background: $superLightGrey;
+
+                        &:nth-child(2n + 1) {
+                            border-right: 4px solid $white;
+                        }
+
+                        &.selected {
+                            background: $lightGrey;
+                        }
+
+                        //&:last-child:nth-child(odd) {
+                        //    border-right: none;
+                        //    width: 100%;
+                        //}
+
+                        input[type="radio"],
+                        input[type="checkbox"] {
+                            display: none;
+                        }
+
+                        label {
+                            display: block;
+                            @include verticalAlign;
+                            .icon {
+                                display: inline-block;
+                                width: 100%;
+                                height: 75px;
+                                position: relative;
+
+                                span {
+                                    width: 75px;
+                                    height: 75px;
+                                    margin-bottom: 10px;
+                                    border: thin solid $white;
+
+                                    border-radius: 50%;
+                                    display: block;
+                                    margin: 0 auto;
+                                    @include verticalAlign;
+
+                                    &.black {
+                                        background: $black;
+                                    }
+                                    &.grey {
+                                        background: $grey;
+                                    }
+                                    &.gunmetal {
+                                        background: $gunmetal;
+                                    }
+                                    &.blue {
+                                        background: $blue;
+                                    }
+                                    &.yellowGold {
+                                        background: $yellowGold;
+                                    }
+                                    &.roseGold {
+                                        background: $roseGold;
+                                    }
+                                    &.fuschia {
+                                        background: $fuschia;
+                                    }
+                                    &.purple {
+                                        background: $purple;
+                                    }
+                                    &.red {
+                                        background: $red;
+                                    }
+                                    &.green {
+                                        background: $green;
+                                    }
+                                    &.teal {
+                                        background: $teal;
+                                    }
+                                    &.copper {
+                                        background: $copper;
+                                    }
+
+                                    &.black,
+                                    &.grey,
+                                    &.gunmetal,
+                                    &.blue,
+                                    &.yellowGold,
+                                    &.roseGold,
+                                    &.fuschia,
+                                    &.purple,
+                                    &.red,
+                                    &.green,
+                                    &.teal,
+                                    &.copper {
+                                        width: 60px;
+                                        height: 60px;
+                                    }
+
+                                }
+                            }
+                            p.title {
+                                text-align: center;
+                                font-size: 14px;
+                                text-transform: capitalize;
+                                margin-top: 10px;
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+    .sideBar {
+        &.sideBar-level2 {
+            .acceptCancel {
+                position: fixed;
+                bottom: 0;
+                display: inline-block;
+                width: $sideBarWidth;
+                background: $black;
+                height: 80px;
+
+                > div {
+                    display: inline-block;
+                    width: calc(100% / 3);
+                    height: inherit;
+                    float: left;
+                    pointer-events: auto;
+                    cursor: pointer;
+
+                    &:not(:last-child) {
+                        border-right:thin solid $grey;
+                    }
+
+                    span {
+                        @include verticalAlign;
+                        display: inline-block;
+                        width: 100%;
+                        text-align: center;
+                        pointer-events: none;
+                        color:$white;
+
+                        i {
+                            font-size:28px;
+                        }
+                        p {
+                            margin-top:7px;
+                            font-size:11px;
+                            color:$grey;
+                        }
+
+                    }
+
+                }
+            }
+        }
+    }
+}

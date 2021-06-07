@@ -1,0 +1,428 @@
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+blockquote,
+q {
+  quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: '';
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#media {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: inline-block;
+  width: calc(100vw - 400px);
+  height: 100vh;
+  background: #ffffff;
+}
+
+#media img {
+  margin: 0 auto;
+  display: block;
+}
+
+#container {
+  width: 100%;
+}
+
+#sideBar {
+  display: inline-block;
+  width: 400px;
+  top: 0;
+  position: fixed;
+  right: 0;
+  height: 100vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-box-shadow: -8px 0px 33px -10px rgba(0, 0, 0, 0.49);
+  box-shadow: -8px 0px 33px -10px rgba(0, 0, 0, 0.49);
+}
+
+#sideBar .sideBar {
+  height: 100vh;
+  width: 100%;
+}
+
+#sideBar .sideBar ul {
+  height: 100%;
+}
+
+#sideBar .sideBar ul li {
+  display: inline-block;
+  list-style: none;
+  position: relative;
+  pointer-events: auto;
+}
+
+#sideBar .sideBar.sideBar-parent ul li {
+  width: 100%;
+  height: calc(100% / 5.5);
+  min-height: 150px;
+}
+
+#sideBar .sideBar.sideBar-parent ul li:not(:last-child) {
+  border-bottom: thin solid #c1c1c1;
+}
+
+#sideBar .sideBar.sideBar-parent ul li div {
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  display: inline-block;
+  width: 100%;
+  pointer-events: none;
+}
+
+#sideBar .sideBar.sideBar-parent ul li div .icon {
+  all: unset;
+  display: inline-block;
+  width: 100%;
+  height: 100px;
+  position: relative;
+}
+
+#sideBar .sideBar.sideBar-parent ul li div .icon span {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto;
+}
+
+#sideBar .sideBar.sideBar-parent ul li div p.title {
+  text-align: center;
+  font-size: 14px;
+  text-transform: capitalize;
+}
+
+#sideBar .sideBar.sideBar-level2 {
+  padding: 0 0 100px 0;
+  width: 400px;
+  top: 0;
+  position: fixed;
+  right: -100%;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+  background: #ffffff;
+}
+
+#sideBar .sideBar.sideBar-level2.open {
+  right: 0;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+}
+
+#sideBar .sideBar.sideBar-level2 {
+  overflow: scroll;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block {
+  display: inline-block;
+  width: 100%;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block .sideBar-block-title {
+  font-size: 17px;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 30px 0;
+  background: #ffffff;
+  font-weight: 700;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li {
+  width: 50%;
+  float: left;
+  padding: 10px;
+  height: 150px;
+  border-bottom: 4px solid #ffffff;
+  background: rgba(193, 193, 193, 0.1);
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li:nth-child(2n + 1) {
+  border-right: 4px solid #ffffff;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li.selected {
+  background: rgba(193, 193, 193, 0.51);
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li input[type="radio"],
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li input[type="checkbox"] {
+  display: none;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label {
+  display: block;
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon {
+  display: inline-block;
+  width: 100%;
+  height: 75px;
+  position: relative;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span {
+  width: 75px;
+  height: 75px;
+  margin-bottom: 10px;
+  border: thin solid #ffffff;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto;
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.black {
+  background: #000000;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.grey {
+  background: #c1c1c1;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.gunmetal {
+  background: #746f62;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.blue {
+  background: #305b86;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.yellowGold {
+  background: #dbb36d;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.roseGold {
+  background: #cb9e7f;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.fuschia {
+  background: #9d2463;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.purple {
+  background: #5b2e8e;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.red {
+  background: #b7092d;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.green {
+  background: #008752;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.teal {
+  background: #008982;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.copper {
+  background: #8a572e;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.black,
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.grey,
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.gunmetal,
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.blue,
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.yellowGold,
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.roseGold,
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.fuschia,
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.purple,
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.red,
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.green,
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.teal,
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label .icon span.copper {
+  width: 60px;
+  height: 60px;
+}
+
+#sideBar .sideBar.sideBar-level2 .sideBar-block ul li label p.title {
+  text-align: center;
+  font-size: 14px;
+  text-transform: capitalize;
+  margin-top: 10px;
+}
+
+#sideBar .sideBar.sideBar-level2 .acceptCancel {
+  position: fixed;
+  bottom: 0;
+  display: inline-block;
+  width: 400px;
+  background: #000000;
+  height: 80px;
+}
+
+#sideBar .sideBar.sideBar-level2 .acceptCancel > div {
+  display: inline-block;
+  width: calc(100% / 3);
+  height: inherit;
+  float: left;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+#sideBar .sideBar.sideBar-level2 .acceptCancel > div:not(:last-child) {
+  border-right: thin solid #c1c1c1;
+}
+
+#sideBar .sideBar.sideBar-level2 .acceptCancel > div span {
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  pointer-events: none;
+  color: #ffffff;
+}
+
+#sideBar .sideBar.sideBar-level2 .acceptCancel > div span i {
+  font-size: 28px;
+}
+
+#sideBar .sideBar.sideBar-level2 .acceptCancel > div span p {
+  margin-top: 7px;
+  font-size: 11px;
+  color: #c1c1c1;
+}
+

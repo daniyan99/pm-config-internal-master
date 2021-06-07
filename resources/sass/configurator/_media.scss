@@ -1,0 +1,20 @@
+#media {
+    position:fixed;
+    top:0;
+    left:0;
+    display:inline-block;
+    width: calc(100vw - #{$sideBarWidth});
+    height:100vh;
+    background:$white;
+
+
+    img {
+        margin:0 auto;
+        display:block;
+    }
+}
+
+
+#container {
+    width:100%;
+}

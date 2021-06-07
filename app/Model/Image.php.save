@@ -1,0 +1,422 @@
+<?php
+    
+    namespace App\Model;
+    
+    use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Support\Facades\Storage;
+    
+    use App\Http\Resources\PreloadImages as PreloadImagesResource;
+    
+    use App\Model\Configurator as Configurator;
+    
+    class Image extends Model
+    {
+        
+        const imageWidth      = 1462;
+        const imageHeight     = 1462;
+        const imageBackground = 'white';
+        const imageQuantum    = '65535';
+        
+        const originalResourcePath = 'images/original/';
+        
+
+
+static private $counter = 0;
+
+
+        protected static function preloadImages ($request)
+        {
+            
+            $width  = $request->query('width') ? $request->query('width') : 6;
+            $images = Storage::disk('builder')->allFiles($width);
+            
+            return new PreloadImagesResource($images);
+        }
+        
+        protected static function makeImage ($request, $params = array())
+        {
+            $defaults = [
+                'angle' => 'base',
+            ];
+            
+            $options            = array_merge($defaults, $params);
+            $queryConfiguration = Configurator::queryConfiguration($request);
+            $fileName           = Configurator::generateFileName($request);
+            
+            $image = new Image();
+            
+            $baseImageContainer = new \Imagick();
+            $baseImageContainer->newImage(1000, 1000, 'white', 'jpg');
+            
+            $imageContainer = new \Imagick();
+            $imageContainer->newImage(self::imageWidth, self::imageHeight, self::imageBackground, 'jpg');
+            
+            if ($options['angle'] == 'base') {
+                //Base
+                if ($queryConfiguration['style'] == 'round') {
+                    $baseProductImage = new \Imagick(resource_path(self::originalResourcePath . $options['angle'] . DIRECTORY_SEPARATOR . $queryConfiguration['width'] . DIRECTORY_SEPARATOR . $queryConfiguration['style']
+                        . DIRECTORY_SEPARATOR . 'base.png'));
+                }
+                if ($queryConfiguration['style'] == 'flat') {
+                    if ($queryConfiguration['bezel'] == null) {
+                        $baseProductImage = new \Imagick(resource_path(self::originalResourcePath . $options['angle'] . DIRECTORY_SEPARATOR . $queryConfiguration['width'] . DIRECTORY_SEPARATOR
+                            . $queryConfiguration['style'] . DIRECTORY_SEPARATOR . 'flat_base.png'));
+                    }
+                    if ($queryConfiguration['bezel'] == 'angleBezel') {
+                        $baseProductImage = new \Imagick(resource_path(self::originalResourcePath . $options['angle'] . DIRECTORY_SEPARATOR . $queryConfiguration['width'] . DIRECTORY_SEPARATOR
+                            . $queryConfiguration['style'] . DIRECTORY_SEPARATOR . 'angle_base.png'));
+                    }
+                    if ($queryConfiguration['bezel'] == 'stepBezel') {
+                        $baseProductImage = new \Imagick(resource_path(self::originalResourcePath . $options['angle'] . DIRECTORY_SEPARATOR . $queryConfiguration['width'] . DIRECTORY_SEPARATOR
+                            . $queryConfiguration['style'] . DIRECTORY_SEPARATOR . 'step_base.png'));
+                    }
+                }
+                
+                $shadowProductImage = new \Imagick(resource_path(self::originalResourcePath . $options['angle'] . DIRECTORY_SEPARATOR . $queryConfiguration['width'] . DIRECTORY_SEPARATOR . $queryConfiguration['style']
+                    . DIRECTORY_SEPARATOR . 'shadow.png'));
+                $shadowProductImage->compositeImageGravity($baseProductImage, \Imagick::COMPOSITE_DEFAULT, \Imagick::GRAVITY_CENTER);
+                $imageContainer->compositeImageGravity($shadowProductImage, \Imagick::COMPOSITE_DEFAULT, \Imagick::GRAVITY_CENTER);
+                
+                //Primary
+                if ($queryConfiguration['style'] == 'round') {
+                    $image->generateColorImage($imageContainer, $options, 'primary', $queryConfiguration['primaryColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                }
+                if ($queryConfiguration['style'] == 'flat') {
+                    if ($queryConfiguration['bezel'] == null) {
+                        $image->generateColorImage($imageContainer, $options, 'flat_primary', $queryConfiguration['primaryColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                    }
+                    if ($queryConfiguration['bezel'] == 'angleBezel') {
+                        $image->generateColorImage($imageContainer, $options, 'angle_primary', $queryConfiguration['primaryColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                    }
+                    if ($queryConfiguration['bezel'] == 'stepBezel') {
+                        $image->generateColorImage($imageContainer, $options, 'step_primary', $queryConfiguration['primaryColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                    }
+                }
+                
+                //Shank
+                if ($queryConfiguration['style'] == 'round') {
+                    $image->generateColorImage($imageContainer, $options, 'shank', $queryConfiguration['shankColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                }
+                if ($queryConfiguration['style'] == 'flat') {
+                    if ($queryConfiguration['bezel'] == null) {
+                        $image->generateColorImage($imageContainer, $options, 'flat_shank', $queryConfiguration['shankColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                    }
+                    if ($queryConfiguration['bezel'] == 'angleBezel') {
+                        $image->generateColorImage($imageContainer, $options, 'angle_shank', $queryConfiguration['shankColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                    }
+                    if ($queryConfiguration['bezel'] == 'stepBezel') {
+                        $image->generateColorImage($imageContainer, $options, 'step_shank', $queryConfiguration['shankColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                    }
+                }
+                //Edge
+                if ($queryConfiguration['style'] == 'round') {
+                    $image->generateColorImage($imageContainer, $options, 'edge', $queryConfiguration['edgeColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                }
+                if ($queryConfiguration['style'] == 'flat') {
+                    if ($queryConfiguration['bezel'] == null) {
+                        $image->generateColorImage($imageContainer, $options, 'flat_edge', $queryConfiguration['edgeColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                    }
+                    if ($queryConfiguration['bezel'] == 'angleBezel') {
+                        $image->generateColorImage($imageContainer, $options, 'angle_edge', $queryConfiguration['edgeColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                    }
+                    if ($queryConfiguration['bezel'] == 'stepBezel') {
+                        $image->generateColorImage($imageContainer, $options, 'step_edge', $queryConfiguration['edgeColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                    }
+                }
+                
+                //Two Tone
+                if ($queryConfiguration['twoTone'] == 'yes') {
+                    if ($queryConfiguration['accentLine'] == 'center') {
+                        if ($queryConfiguration['position'] == 'left') {
+                            if ($queryConfiguration['style'] == 'round') {
+                                $image->generateColorImage($imageContainer, $options, 'brush_left_center', 'white', $queryConfiguration['width'], $queryConfiguration['style']);
+                            }
+                            if ($queryConfiguration['style'] == 'flat') {
+                                if ($queryConfiguration['bezel'] == null) {
+                                    $image->generateColorImage($imageContainer, $options, 'flat_brush_left_center', 'white', $queryConfiguration['width'], $queryConfiguration['style']);
+                                }
+                                if ($queryConfiguration['bezel'] == 'angleBezel') {
+                                    $image->generateColorImage($imageContainer, $options, 'angle_brush_left_center', 'white', $queryConfiguration['width'], $queryConfiguration['style']);
+                                }
+                                if ($queryConfiguration['bezel'] == 'stepBezel') {
+                                    $image->generateColorImage($imageContainer, $options, 'step_brush_left_center', 'white', $queryConfiguration['width'], $queryConfiguration['style']);
+                                }
+                            }
+                        } elseif ($queryConfiguration['position'] == 'right') {
+                            if ($queryConfiguration['style'] == 'round') {
+                                $image->generateColorImage($imageContainer, $options, 'brush_right_center', 'white', $queryConfiguration['width'], $queryConfiguration['style']);
+                            }
+                            if ($queryConfiguration['style'] == 'flat') {
+                                if ($queryConfiguration['bezel'] == null) {
+                                    $image->generateColorImage($imageContainer, $options, 'flat_brush_right_center', 'white', $queryConfiguration['width'], $queryConfiguration['style']);
+                                }
+                                if ($queryConfiguration['bezel'] == 'angleBezel') {
+                                    $image->generateColorImage($imageContainer, $options, 'angle_brush_right_center', 'white', $queryConfiguration['width'], $queryConfiguration['style']);
+                                }
+                                if ($queryConfiguration['bezel'] == 'stepBezel') {
+                                    $image->generateColorImage($imageContainer, $options, 'step_brush_right_center', 'white', $queryConfiguration['width'], $queryConfiguration['style']);
+                                }
+                            }
+                        }
+                    } elseif ($queryConfiguration['accentLine'] == 'offset') {
+                        if ($queryConfiguration['position'] == 'left') {
+                            
+                            if ($queryConfiguration['style'] == 'round') {
+                                $image->generateColorImage($imageContainer, $options, 'brush_left_offset', 'white', $queryConfiguration['width'], $queryConfiguration['style']);
+                            }
+                            if ($queryConfiguration['style'] == 'flat') {
+                                if ($queryConfiguration['bezel'] == null) {
+                                    $image->generateColorImage($imageContainer, $options, 'flat_brush_left_offset', 'white', $queryConfiguration['width'], $queryConfiguration['style']);
+                                }
+                                if ($queryConfiguration['bezel'] == 'angleBezel') {
+                                    $image->generateColorImage($imageContainer, $options, 'angle_brush_left_offset', 'white', $queryConfiguration['width'], $queryConfiguration['style']);
+                                }
+                                if ($queryConfiguration['bezel'] == 'stepBezel') {
+                                    $image->generateColorImage($imageContainer, $options, 'step_brush_left_offset', 'white', $queryConfiguration['width'], $queryConfiguration['style']);
+                                }
+                            }
+                        } elseif ($queryConfiguration['position'] == 'right') {
+                            if ($queryConfiguration['style'] == 'round') {
+                                $image->generateColorImage($imageContainer, $options, 'brush_right_offset', 'white', $queryConfiguration['width'], $queryConfiguration['style']);
+                            }
+                            if ($queryConfiguration['style'] == 'flat') {
+                                if ($queryConfiguration['bezel'] == null) {
+                                    $image->generateColorImage($imageContainer, $options, 'flat_brush_right_offset', 'white', $queryConfiguration['width'], $queryConfiguration['style']);
+                                }
+                                if ($queryConfiguration['bezel'] == 'angleBezel') {
+                                    $image->generateColorImage($imageContainer, $options, 'angle_brush_right_offset', 'white', $queryConfiguration['width'], $queryConfiguration['style']);
+                                }
+                                if ($queryConfiguration['bezel'] == 'stepBezel') {
+                                    $image->generateColorImage($imageContainer, $options, 'step_brush_right_offset', 'white', $queryConfiguration['width'], $queryConfiguration['style']);
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                //Accent
+                if ($queryConfiguration['accent'] == 'thin') {
+                    if ($queryConfiguration['accentLine'] == 'center') {
+                        if ($queryConfiguration['style'] == 'round') {
+                            $image->generateColorImage($imageContainer, $options, 'accent_thin_center', $queryConfiguration['accentColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                        }
+                        if ($queryConfiguration['style'] == 'flat') {
+                            if ($queryConfiguration['bezel'] == null) {
+                                $image->generateColorImage($imageContainer, $options, 'accent_thin_center', $queryConfiguration['accentColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                            }
+                            if ($queryConfiguration['bezel'] == 'angleBezel') {
+                                $image->generateColorImage($imageContainer, $options, 'angle_accent_thin_center', $queryConfiguration['accentColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                            }
+                            if ($queryConfiguration['bezel'] == 'stepBezel') {
+                                $image->generateColorImage($imageContainer, $options, 'step_accent_thin_center', $queryConfiguration['accentColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                            }
+                        }
+                    } elseif ($queryConfiguration['accentLine'] == 'offset') {
+                        if ($queryConfiguration['style'] == 'round') {
+                            $image->generateColorImage($imageContainer, $options, 'accent_thin_offset', $queryConfiguration['accentColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                        }
+                        if ($queryConfiguration['style'] == 'flat') {
+                            if ($queryConfiguration['bezel'] == null) {
+                                $image->generateColorImage($imageContainer, $options, 'accent_thin_offset', $queryConfiguration['accentColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                            }
+                            if ($queryConfiguration['bezel'] == 'angleBezel') {
+                                $image->generateColorImage($imageContainer, $options, 'angle_accent_thin_offset', $queryConfiguration['accentColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                            }
+                            if ($queryConfiguration['bezel'] == 'stepBezel') {
+                                $image->generateColorImage($imageContainer, $options, 'step_accent_thin_offset', $queryConfiguration['accentColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                            }
+                        }
+                    } elseif ($queryConfiguration['accentLine'] == 'double') {
+                        if ($queryConfiguration['style'] == 'round') {
+                            $image->generateColorImage($imageContainer, $options, 'accent_thin_double', $queryConfiguration['accentColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                        }
+                        if ($queryConfiguration['style'] == 'flat') {
+                            if ($queryConfiguration['bezel'] == null) {
+                                $image->generateColorImage($imageContainer, $options, 'accent_thin_double', $queryConfiguration['accentColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                            }
+                            if ($queryConfiguration['bezel'] == 'angleBezel') {
+                                $image->generateColorImage($imageContainer, $options, 'angle_accent_thin_double', $queryConfiguration['accentColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                            }
+                            if ($queryConfiguration['bezel'] == 'stepBezel') {
+                                $image->generateColorImage($imageContainer, $options, 'step_accent_thin_double', $queryConfiguration['accentColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                            }
+                        }
+                    }
+                } elseif ($queryConfiguration['accent'] == 'thick') {
+                    if ($queryConfiguration['style'] == 'flat') {
+                        if ($queryConfiguration['bezel'] == 'angleBezel') {
+                            $image->generateColorImage($imageContainer, $options, 'thick_accent', $queryConfiguration['accentColor'], $queryConfiguration['width'], $queryConfiguration['style']);
+                        }
+                    }
+                }
+            }
+            
+            $imageContainer->resizeImage(1300, 1300, \Imagick::FILTER_HANNING, 1, true);
+          $baseImageContainer->compositeImageGravity($imageContainer, \Imagick::COMPOSITE_DEFAULT, \Imagick::GRAVITY_CENTER);
+            $baseImageContainer->shaveImage(125, 0);
+           $baseImageContainer->writeImage(storage_path('app/public/render/') . $fileName . '.jpg');
+            
+            // $imageContainer->shaveImage(125,0);
+            // $imageContainer->writeImage(storage_path('app/public/render/') . $fileName . '.jpg');
+
+//dd(self::$counter);            
+            return;
+        }
+        
+        protected function generateBaseImage ($imageContainer, $queryConfiguration, $options)
+        {
+            
+            $baseProductImage = new \Imagick(resource_path(self::originalResourcePath . $options['angle'] . DIRECTORY_SEPARATOR . $queryConfiguration['width'] . DIRECTORY_SEPARATOR . $queryConfiguration['style']
+                . DIRECTORY_SEPARATOR . 'base.png'));
+            
+            $shadowProductImage = new \Imagick(resource_path(self::originalResourcePath . $options['angle'] . DIRECTORY_SEPARATOR . $queryConfiguration['width'] . DIRECTORY_SEPARATOR . $queryConfiguration['style']
+                . DIRECTORY_SEPARATOR . 'shadow.png'));
+            
+            $shadowProductImage->compositeImageGravity($baseProductImage, \Imagick::COMPOSITE_DEFAULT, \Imagick::GRAVITY_CENTER);
+            
+            $imageContainer->compositeImageGravity($shadowProductImage, \Imagick::COMPOSITE_DEFAULT, \Imagick::GRAVITY_CENTER);
+            
+            return $imageContainer;
+            
+        }
+        
+        protected function generateColorImage ($imageContainer, $options, $section, $color, $width, $style)
+        {
+
+
+
+
+$time_pre = microtime(true);
+
+            $angle = $options['angle'];
+            
+            $sectionBaseImage = resource_path(self::originalResourcePath . $angle . DIRECTORY_SEPARATOR . $width . DIRECTORY_SEPARATOR . $style . DIRECTORY_SEPARATOR . 'base/' . $section . '.png');
+            $baseImage        = new \Imagick($sectionBaseImage);
+            
+            $iWidth  = $baseImage->getImageWidth();
+            $iHeight = $baseImage->getImageHeight();
+            
+            $newColor = $this->getColor($color);
+            $levels   = $this->getLevelsBasedOnColor($color);
+            
+            $colorImage = new \Imagick();
+            $colorImage->newImage($iWidth, $iHeight, $newColor);
+            $colorImage->setImageFormat("jpg");
+            $colorImage->setImageMatte(1);
+            $colorImage->compositeImage($baseImage, \Imagick::COMPOSITE_DSTIN, 0, 0);
+            
+            $baseImage->compositeImageGravity($colorImage, \Imagick::COMPOSITE_MULTIPLY, \Imagick::GRAVITY_CENTER);
+            $baseImage->levelImage($levels[0], $levels[1], $levels[2]);
+            
+            // $baseImage->resizeImage((($iWidth * 90) * .01), (($iHeight * 90) * .01), \Imagick::FILTER_TRIANGLE, 1);
+            // $baseImage->blurImage(0.1, 0.1);
+            
+            $imageContainer->compositeImageGravity($baseImage, \Imagick::COMPOSITE_DEFAULT, \Imagick::GRAVITY_CENTER);
+       
+$time_post = microtime(true);
+$exec_time = $time_post - $time_pre;
+
+self::$counter = self::$counter + 1;
+
+            return $imageContainer;
+        }
+        
+        protected function getColor ($color)
+        {
+            
+            switch ($color) {
+                case 'red':
+                    return '#c32247'; //#e86767
+                    break;
+                case 'purple':
+                    return '#5b2e8e';
+                    break;
+                case 'fuschia':
+                    return '#9d2463';
+                    break;
+                case 'green':
+                    return '#008752';
+                    break;
+                case 'teal':
+                    return '#008982';
+                    break;
+                case 'copper':
+                    return '#8a572e';
+                    break;
+                case 'blue':
+                    return '#425d78';
+                    break;
+                case 'gunmetal':
+                    return '#746f62';
+                    break;
+                case 'black':
+                    return '#4a4948';
+                    break;
+                case 'yellowGold':
+                    return '#dbb36d';
+                    break;
+                case 'roseGold':
+                    return '#cb9e7f';
+                    break;
+                default:
+                    return '#ffffff';
+                    break;
+            }
+        }
+        
+        protected function getLevelsBasedOnColor ($color)
+        {
+            switch ($color) {
+                case 'red':
+                    $levels = array(23, 0.91, 255);
+                    break;
+                case 'purple':
+                    $levels = array(23, 0.96, 217);
+                    break;
+                case 'fuschia':
+                    $levels = array(23, 0.85, 195);
+                    break;
+                case 'green':
+                    $levels = array(23, 0.86, 207);
+                    break;
+                case 'teal':
+                    $levels = array(23, 0.95, 203);
+                    break;
+                case 'copper':
+                    $levels = array(23, 0.95, 203);
+                    break;
+                case 'blue':
+                    $levels = array(32, 0.90, 164);
+                    break;
+                case 'gunmetal':
+                    $levels = array(23, 0.85, 191);
+                    break;
+                case 'black':
+                    $levels = array(23, 0.90, 159);
+                    break;
+                case 'yellowGold':
+                    $levels = array(23, 1.52, 181);
+                    break;
+                case 'roseGold':
+                    $levels = array(23, 1.56, 185);
+                    break;
+                default:
+                    $levels = array(0, 1, 255);
+                    break;
+            }
+            
+            $quamtumLevels = $this->quantamizePhotoshopLevelsData($levels);
+            
+            return $quamtumLevels;
+        }
+        
+        protected function quantamizePhotoshopLevelsData ($levels)
+        {
+            $blackPoint = (self::imageQuantum * $levels[0]) / 255;
+            $gamma      = $levels[1];
+            $whitePoint = (self::imageQuantum * $levels[2] / 255);
+            
+            return array($blackPoint, $gamma, $whitePoint);
+        }
+        
+    }
